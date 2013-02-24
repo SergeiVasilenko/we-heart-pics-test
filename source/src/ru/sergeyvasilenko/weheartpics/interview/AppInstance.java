@@ -15,6 +15,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 
+import java.io.File;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -26,7 +27,8 @@ import java.util.concurrent.ThreadFactory;
  */
 public class AppInstance extends Application {
 
-    private static final int DISC_CACHE_SIZE = 50 * 1024 * 1014;
+    private static final int EXTERNAL_DISC_CACHE_SIZE = 50 * 1024 * 1014;
+    private static final int INTERNAL_DISC_CACHE_SIZE = 8 * 1024 * 1024;
     private static final int MEMORY_CACHE_SIZE = 4 * 1024 * 1024;
 
     private static AppInstance sInstance;
@@ -91,15 +93,26 @@ public class AppInstance extends Application {
 
         //init disc cache
         BaseDiscCache discCache = null;
+        int discCacheSize;
+        File cacheDir;
+        updateExternalStorageState();
         if (mExternalStorageAvailable && mExternalStorageWriteable) {
-            int discCacheSize = DISC_CACHE_SIZE;
+            discCacheSize = EXTERNAL_DISC_CACHE_SIZE;
             long externalFreeSpace = getExternalStorageAvailableSpace();
+            cacheDir = getExternalCacheDir();
             if (discCacheSize > externalFreeSpace) {
                 discCacheSize = (int) (externalFreeSpace - 1024 * 1024);
             }
-            if (discCacheSize > 0) {
-                discCache = new TotalSizeLimitedDiscCache(getExternalCacheDir(), discCacheSize);
+        } else {
+            discCacheSize = INTERNAL_DISC_CACHE_SIZE;
+            cacheDir = getCacheDir();
+            long internalFreeSpace = getInternalStorageAvailableSpace();
+            if (discCacheSize > internalFreeSpace) {
+                discCacheSize = (int) (internalFreeSpace - 1024 * 1024);
             }
+        }
+        if (discCacheSize > 0) {
+            discCache = new TotalSizeLimitedDiscCache(cacheDir, discCacheSize);
         }
 
         //image loader
@@ -143,9 +156,24 @@ public class AppInstance extends Application {
     private static long getExternalStorageAvailableSpace() {
         long availableSpace = -1L;
         try {
-            StatFs stat = new StatFs(Environment.getExternalStorageDirectory()
-                    .getPath());
+            StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
             stat.restat(Environment.getExternalStorageDirectory().getPath());
+            availableSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return availableSpace;
+    }
+
+    /**
+     * @return Number of bytes available on internal storage
+     */
+    private static long getInternalStorageAvailableSpace() {
+        long availableSpace = -1L;
+        try {
+            StatFs stat = new StatFs(Environment.getDataDirectory().getPath());
+            stat.restat(Environment.getDataDirectory().getPath());
             availableSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
         } catch (Exception e) {
             e.printStackTrace();
