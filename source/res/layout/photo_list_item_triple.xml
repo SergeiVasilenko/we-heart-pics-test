@@ -19,7 +19,6 @@
         android:layout_alignTop="@id/substrate"
         android:layout_marginLeft="5.5dp"
         android:layout_marginTop="14dp"
-        android:src="@drawable/example1"
         />
     <ImageView
             android:id="@+id/image2"
@@ -28,7 +27,6 @@
             android:layout_centerHorizontal="true"
             android:layout_alignTop="@id/substrate"
             android:layout_marginTop="14dp"
-            android:src="@drawable/example1"
             />
     <ImageView
             android:id="@+id/image3"
@@ -38,7 +36,6 @@
             android:layout_alignTop="@id/substrate"
             android:layout_marginRight="5.5dp"
             android:layout_marginTop="14dp"
-            android:src="@drawable/example1"
             />
     <ImageView
             android:id="@+id/rope_top"
