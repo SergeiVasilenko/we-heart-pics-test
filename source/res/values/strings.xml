@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">WeHeartPics-Interview</string>
+
+    <string name="time_less_than_1_m">&lt; 1 m</string>
+    <string name="time_ago">ago</string>
+    <string name="time_minute">m</string>
+    <string name="time_hour">h</string>
+    <string name="time_day">d</string>
+
+    <string name="no_internet_connection">No internet connection</string>
 </resources>
