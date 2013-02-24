@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--suppress AndroidLintContentDescription -->
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <ImageView
+            android:id="@+id/image"
+            android:layout_height="@dimen/imageViewSizeBig"
+            android:layout_width="@dimen/imageViewSizeBig"
+            android:layout_marginTop="14dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/example"
+            />
+    <View
+            android:id="@+id/substrate"
+            android:layout_height="315dp"
+            android:layout_width="@dimen/substrateWidth"
+            android:layout_marginTop="1dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/substrate"
+            />
+    <ImageView
+            android:id="@+id/rope_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignTop="@id/substrate"
+            android:background="@drawable/rope_top"
+            />
+    <RelativeLayout
+            android:id="@+id/substrate_info"
+            android:layout_height="wrap_content"
+            android:layout_width="312dp"
+            android:layout_centerHorizontal="true"
+            android:minHeight="55dp"
+            android:layout_below="@id/substrate"
+            android:paddingBottom="9dp"
+            android:background="@drawable/substrate_info"
+            >
+        <TextView
+                android:id="@+id/caption"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="16dp"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/create_time"
+                android:textColor="@color/textDark"
+                android:textSize="@dimen/textSizeCaption"
+                />
+        <TextView
+                android:id="@+id/create_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="17dp"
+                android:layout_marginTop="29dp"
+                android:textColor="@color/textGray"
+                android:textSize="@dimen/textSizeCreateTime"
+                />
+    </RelativeLayout>
+    <TextView
+            android:id="@+id/likes_count"
+            android:layout_width="37dp"
+            android:layout_height="34dp"
+            android:layout_below="@id/substrate"
+            android:layout_alignRight="@id/substrate"
+            android:layout_marginTop="-16.5dp"
+            android:layout_marginRight="19.5dp"
+            android:gravity="center"
+            android:paddingBottom="4dp"
+            android:background="@drawable/likes"
+            android:visibility="visible"
+            android:textColor="@color/textLikes"
+            android:textSize="@dimen/textSizeLikes"
+            android:textStyle="bold"
+            />
+    <ImageView
+            android:id="@+id/rope_bottom"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_below="@id/substrate_info"
+            android:layout_marginTop="-9dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/rope_bottom"
+            />
+
+
+</RelativeLayout>

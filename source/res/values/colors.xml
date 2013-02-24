@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background">#f0f0f0</color>
+    <color name="textLikes">#c81414</color>
+    <color name="textGray">#b7b7b7</color>
+    <color name="textDark">#444444</color>
+</resources>
