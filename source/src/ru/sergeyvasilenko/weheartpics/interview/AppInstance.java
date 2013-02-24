@@ -15,6 +15,10 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+
 /**
  * User: Serg
  * Date: 23.02.13
@@ -35,10 +39,20 @@ public class AppInstance extends Application {
     private DisplayImageOptions mDisplayImageOptionsNoDiskCache;
     private DisplayImageOptions mDisplayImageOptionsWithDiskCache;
 
+    private Executor mExecutor;
+
     @Override
     public void onCreate() {
         super.onCreate();
         sInstance = this;
+        mExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                Thread thread = new Thread(r, "Request executor");
+                thread.setPriority(Thread.NORM_PRIORITY - 1);
+                return thread;
+            }
+        });
         configureImageLoader();
         mContentProvider = new ContentProviderImpl();
     }
@@ -49,6 +63,10 @@ public class AppInstance extends Application {
 
     public static ContentProvider getContentProvider() {
         return sInstance.mContentProvider;
+    }
+
+    public static Executor getExecutor() {
+        return sInstance.mExecutor;
     }
 
     public static DisplayImageOptions getDisplayImageOptions() {

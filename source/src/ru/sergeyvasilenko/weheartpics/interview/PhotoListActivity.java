@@ -76,7 +76,7 @@ public class PhotoListActivity extends Activity {
             return;
         }
         mLoadingState = LoadingState.LOADING;
-        new UpdateTask().execute();
+        new UpdateTask().executeOnExecutor(AppInstance.getExecutor());
     }
 
     private class UpdateTask extends AsyncTask<Void, Void, List<PhotoDescription>> {
