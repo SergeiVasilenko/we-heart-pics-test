@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--suppress AndroidLintContentDescription -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+    <View
+            android:id="@+id/substrate"
+            android:layout_height="127dp"
+            android:layout_width="@dimen/substrateWidth"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/substrate_mini"
+            />
+    <TextView
+            android:id="@+id/text_loading"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/loading"
+            />
+    />
+    <ImageView
+            android:id="@+id/rope_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignTop="@id/substrate"
+            android:src="@drawable/rope_top"
+            />
+
+    <ImageView
+            android:id="@+id/rope_bottom"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_below="@id/substrate"
+            android:layout_marginTop="-9dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/rope_bottom"
+            />
+
+</RelativeLayout>

@@ -11,6 +11,8 @@ import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.*;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -66,7 +68,7 @@ public class PhotoListActivity extends Activity {
 
         if (!AppInstance.checkConnection()) {
             Toast.makeText(this, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
-        } else if(mOffset == 0) {
+        } else if (mOffset == 0) {
             updateData();
         }
     }
@@ -105,8 +107,11 @@ public class PhotoListActivity extends Activity {
 
     private static class PhotoAdapter extends BaseAdapter {
 
+        private static final String LOADING_ITEM = "Loading...";
+
         private static final int SINGLE_TYPE = 0;
         private static final int TRIPLE_TYPE = 1;
+        private static final int LOADING_TYPE = 2;
 
         private List<PhotoDescription> mList = new ArrayList<PhotoDescription>();
 
@@ -129,11 +134,14 @@ public class PhotoListActivity extends Activity {
         public int getCount() {
             int size = mList.size();
             int remainder = size % 4;
-            return size / 4 * 2 + remainder;
+            return size / 4 * 2 + remainder + 1;
         }
 
         @Override
         public Object getItem(int position) {
+            if (position == getCount() - 1) {
+                return LOADING_ITEM;
+            }
             int itemId = (int) getItemId(position);
             int remainder = position % 2;
             if (remainder == 0) {
@@ -155,11 +163,14 @@ public class PhotoListActivity extends Activity {
 
         @Override
         public int getViewTypeCount() {
-            return 2;
+            return 3;
         }
 
         @Override
         public int getItemViewType(int position) {
+            if (position == getCount() - 1) {
+                return LOADING_TYPE;
+            }
             return position % 2;
         }
 
@@ -173,12 +184,16 @@ public class PhotoListActivity extends Activity {
                 }
                 ((SingleView) convertView)
                         .setPhotoDescription((PhotoDescription) getItem(position), position);
-            } else {
+            } else if (type == TRIPLE_TYPE) {
                 if (convertView == null) {
                     convertView = new TripleView(mActivity);
                 }
                 ((TripleView) convertView)
                         .setPhotoDescriptions((List<PhotoDescription>) getItem(position));
+            } else if (type == LOADING_TYPE) {
+                if (convertView == null) {
+                    convertView = new LoadingView(mActivity);
+                }
             }
 
             return convertView;
@@ -204,7 +219,7 @@ public class PhotoListActivity extends Activity {
 
         private String getCreateTimeString(long createTime) {
             long current = System.currentTimeMillis();
-            long difference = current - createTime * 1000;
+            long difference = current - createTime;
             return Time2String.getApproximateTimeString(mActivity, difference);
         }
 
@@ -215,6 +230,9 @@ public class PhotoListActivity extends Activity {
             private TextView mCaptionView;
             private TextView mCreateTimeView;
             private TextView mLikesView;
+
+            //field to prevent image reload
+            private long mImageId;
 
             SingleView(Context context) {
                 super(context);
@@ -229,6 +247,12 @@ public class PhotoListActivity extends Activity {
             }
 
             void setPhotoDescription(final PhotoDescription description, int position) {
+                //prevent reload
+                if(mImageId == description.getId()) {
+                    return;
+                }
+                mImageId = description.getId();
+
                 mRopeTop.setVisibility(position == 0 ? GONE : VISIBLE);
                 String caption = description.getCaption();
                 if (caption != null) {
@@ -253,6 +277,7 @@ public class PhotoListActivity extends Activity {
         private class TripleView extends FrameLayout {
 
             private List<ImageView> mImageViewList = new ArrayList<ImageView>(3);
+            private long[] mImageIds = new long[3];
 
             TripleView(Context context) {
                 super(context);
@@ -263,23 +288,47 @@ public class PhotoListActivity extends Activity {
             }
 
             void setPhotoDescriptions(List<PhotoDescription> descriptionList) {
-                ImageLoader imageLoader = ImageLoader.getInstance();
+
                 for (int i = 0; i < 3; i++) {
                     ImageView imageView = mImageViewList.get(i);
 
-                    imageLoader.cancelDisplayTask(imageView);
-                    imageView.setImageBitmap(null);
-                    imageView.setOnClickListener(null);
-
                     if (i < descriptionList.size()) {
                         PhotoDescription description = descriptionList.get(i);
+
+                        //prevent reload
+                        if(mImageIds[i] == description.getId()) {
+                            continue;
+                        }
+                        mImageIds[i] = description.getId();
+
+                        resetImageView(imageView);
+
                         int viewSize = getResources().getDimensionPixelSize(R.dimen.imageViewSizeSmall);
                         String imageUrl = getImageUrl(description, viewSize);
                         DisplayImageOptions displayImageOptions = AppInstance.getDisplayImageOptions();
+
+                        ImageLoader imageLoader = ImageLoader.getInstance();
                         imageLoader.displayImage(imageUrl, imageView, displayImageOptions,
                                 new OnImageLoadedListener(description.getSiteUrl()));
+                    } else {
+                        mImageIds[i] = 0L;
+                        resetImageView(imageView);
                     }
                 }
+            }
+
+            private void resetImageView(ImageView imageView) {
+                ImageLoader imageLoader = ImageLoader.getInstance();
+                imageLoader.cancelDisplayTask(imageView);
+                imageView.setImageBitmap(null);
+                imageView.setOnClickListener(null);
+            }
+        }
+
+        private class LoadingView extends FrameLayout {
+            public LoadingView(Context context) {
+                super(context);
+                mInflater.inflate(R.layout.photo_list_item_loading, this);
             }
         }
 
@@ -293,10 +342,11 @@ public class PhotoListActivity extends Activity {
 
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                Animation animation = AnimationUtils.loadAnimation(mActivity, R.anim.fade_in);
+                view.startAnimation(animation);
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mUrl));
                         mActivity.startActivity(intent);
                     }

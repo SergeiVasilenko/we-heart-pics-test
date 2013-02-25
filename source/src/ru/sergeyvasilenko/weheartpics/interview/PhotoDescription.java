@@ -11,6 +11,7 @@ import java.util.Set;
  */
 public class PhotoDescription {
 
+    private long mId;
     private String mCaption;
     private int mLikesCount;
     private long mCreateTime;
@@ -68,5 +69,13 @@ public class PhotoDescription {
 
     public void setImageSizes(Set<Integer> mImageSizes) {
         this.mImageSizes = mImageSizes;
+    }
+
+    public long getId() {
+        return mId;
+    }
+
+    public void setId(long id) {
+        mId = id;
     }
 }

@@ -90,8 +90,9 @@ public class NetworkContentProvider implements ContentProvider {
                     }
                     photoDescription.setCaption(caption);
                     photoDescription.setLikesCount(jPhotoDescription.getInt("like"));
-                    photoDescription.setCreateTime(jPhotoDescription.getLong("timestamp"));
+                    photoDescription.setCreateTime(jPhotoDescription.getLong("timestamp") * 1000);
                     photoDescription.setSiteUrl(jPhotoDescription.getString("site_url"));
+                    photoDescription.setId(jPhotoDescription.getLong("id"));
 
                     getImageSizes(photoDescription, jPhotoDescription);
 

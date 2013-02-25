@@ -27,7 +27,7 @@ import java.util.concurrent.ThreadFactory;
  */
 public class AppInstance extends Application {
 
-    private static final int EXTERNAL_DISC_CACHE_SIZE = 50 * 1024 * 1014;
+    private static final int EXTERNAL_DISC_CACHE_SIZE = 20 * 1024 * 1014;
     private static final int INTERNAL_DISC_CACHE_SIZE = 8 * 1024 * 1024;
     private static final int MEMORY_CACHE_SIZE = 4 * 1024 * 1024;
 
